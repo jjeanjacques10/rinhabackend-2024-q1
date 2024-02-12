@@ -9,9 +9,9 @@ import com.jjeanjacques.rinhabackend.repository.TransactionRepository
 import main.kotlin.com.jjeanjacques.rinhabackend.exception.ClientNotFound
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Example
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.util.*
 
 
 @Service
@@ -30,7 +30,7 @@ class TransactionService(
         val transactionEntity = TransactionEntity(
             valor = transactionDto.value,
             descricao = transactionDto.description,
-            tipo = transactionDto.type,
+            tipo = transactionDto.type.toString().lowercase(Locale.getDefault()),
             cliente = client,
             realizadaEm = LocalDateTime.now()
         )
