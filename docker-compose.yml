@@ -3,8 +3,9 @@ version: "3.5"
 services:
   api01: &api
     build:
-      context: .
+      context: ./app
     hostname: api01
+    #network_mode: host
     environment:
       - DB_HOSTNAME=db
       - DB_USER=admin
@@ -22,7 +23,7 @@ services:
       resources:
         limits:
           cpus: "0.55"
-          memory: "200MB"
+          memory: "220MB"
 
   api02:
     <<: *api
@@ -61,7 +62,7 @@ services:
       resources:
         limits:
           cpus: "0.25"
-          memory: "140MB"
+          memory: "100MB"
 
 networks:
   default:

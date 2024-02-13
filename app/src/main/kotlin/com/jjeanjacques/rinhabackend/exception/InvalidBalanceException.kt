@@ -2,4 +2,4 @@ package com.jjeanjacques.rinhabackend.exception
 
 import java.lang.RuntimeException
 
-class InvalidTypeException(message: String?) : RuntimeException(message)
+class InvalidBalanceException(message: String?) : RuntimeException(message)

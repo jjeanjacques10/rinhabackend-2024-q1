@@ -1,7 +1,7 @@
 package com.jjeanjacques.rinhabackend.controller.model
 
 data class ExceptionDetailsDTO(
-    val title: String?,
+    var title: String? = null,
     val timestamp: String,
     val status: Int,
     val details: String?,

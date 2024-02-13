@@ -1,4 +1,4 @@
-package main.kotlin.com.jjeanjacques.rinhabackend.exception
+package com.jjeanjacques.rinhabackend.exception
 
 import java.lang.RuntimeException
 
