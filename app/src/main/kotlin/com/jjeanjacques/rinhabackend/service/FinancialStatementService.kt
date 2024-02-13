@@ -2,6 +2,7 @@ package com.jjeanjacques.rinhabackend.service
 
 import com.jjeanjacques.rinhabackend.entity.BalanceEntity
 import com.jjeanjacques.rinhabackend.entity.TransactionEntity
+import com.jjeanjacques.rinhabackend.enums.TypeTransaction
 import com.jjeanjacques.rinhabackend.exception.ClientNotFound
 import com.jjeanjacques.rinhabackend.model.FinancialStatement
 import com.jjeanjacques.rinhabackend.model.Saldo
@@ -9,11 +10,9 @@ import com.jjeanjacques.rinhabackend.model.Transaction
 import com.jjeanjacques.rinhabackend.repository.BalanceRepository
 import com.jjeanjacques.rinhabackend.repository.ClientRepository
 import com.jjeanjacques.rinhabackend.repository.TransactionRepository
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import com.jjeanjacques.rinhabackend.enums.TypeTransaction
 
 
 @Service
@@ -27,7 +26,7 @@ class FinancialStatementService(
         val client = clientRepository.findById(clientId.toLong())
             .orElseThrow { ClientNotFound("Client not found with id $clientId") }
         val balance = balanceRepository.findByCliente(client)
-        val transactions = transactionRepository.findByCliente(client)
+        val transactions = transactionRepository.findByCliente(client, PageRequest.of(0, 10))
 
         return buildFinancialStatement(transactions, balance)
     }
@@ -49,7 +48,7 @@ class FinancialStatementService(
                     description = it.descricao,
                     createAt = it.realizadaEm
                 )
-            }
+            }.sortedByDescending { it.createAt }
         )
     }
 
