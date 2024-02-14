@@ -1,6 +1,6 @@
 package com.jjeanjacques.rinhabackend.controller
 
-import com.jjeanjacques.rinhabackend.controller.model.ResponseDto
+import com.jjeanjacques.rinhabackend.controller.model.BalanceDto
 import com.jjeanjacques.rinhabackend.controller.model.TransactionDto
 import com.jjeanjacques.rinhabackend.model.FinancialStatement
 import com.jjeanjacques.rinhabackend.service.FinancialStatementService
@@ -25,15 +25,9 @@ class Controller(
     fun createClient(
         @PathVariable clientId: Int,
         @Valid @RequestBody transaction: TransactionDto
-    ): ResponseEntity<ResponseDto> {
+    ): ResponseEntity<BalanceDto> {
         log.debug("Processing transaction to client $clientId")
-        val balance = transactionService.save(clientId, transaction)
-        return ResponseEntity.ok(
-            ResponseDto(
-                balance.valor,
-                balance.cliente!!.limite
-            )
-        )
+        return ResponseEntity.ok(transactionService.save(clientId, transaction))
     }
 
     @GetMapping("/{clientId}/extrato")

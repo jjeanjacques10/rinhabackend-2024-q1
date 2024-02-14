@@ -8,8 +8,7 @@ import java.time.LocalDateTime
 
 
 data class TransactionDto(
-
-    val value: Int,
+    @JsonProperty("valor") val value: Int,
     @JsonProperty("tipo") val type: TypeTransaction,
     @JsonProperty("descricao")
     @field:Size(

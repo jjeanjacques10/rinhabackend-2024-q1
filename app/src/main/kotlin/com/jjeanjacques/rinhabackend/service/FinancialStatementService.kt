@@ -1,13 +1,12 @@
 package com.jjeanjacques.rinhabackend.service
 
-import com.jjeanjacques.rinhabackend.entity.BalanceEntity
 import com.jjeanjacques.rinhabackend.entity.TransactionEntity
 import com.jjeanjacques.rinhabackend.enums.TypeTransaction
 import com.jjeanjacques.rinhabackend.exception.ClientNotFound
+import com.jjeanjacques.rinhabackend.model.ClientWithBalance
 import com.jjeanjacques.rinhabackend.model.FinancialStatement
 import com.jjeanjacques.rinhabackend.model.Saldo
 import com.jjeanjacques.rinhabackend.model.Transaction
-import com.jjeanjacques.rinhabackend.repository.BalanceRepository
 import com.jjeanjacques.rinhabackend.repository.ClientRepository
 import com.jjeanjacques.rinhabackend.repository.TransactionRepository
 import org.springframework.data.domain.PageRequest
@@ -18,28 +17,29 @@ import java.time.LocalDateTime
 @Service
 class FinancialStatementService(
     val transactionRepository: TransactionRepository,
-    val clientRepository: ClientRepository,
-    val balanceRepository: BalanceRepository
+    val clientRepository: ClientRepository
 ) {
 
     fun getFromUser(clientId: Int): FinancialStatement {
-        val client = clientRepository.findById(clientId.toLong())
-            .orElseThrow { ClientNotFound("Client not found with id $clientId") }
-        val balance = balanceRepository.findByCliente(client)
-        val transactions = transactionRepository.findByCliente(client, PageRequest.of(0, 10))
+        val clientWithBalance = clientRepository.findClienteWithSaldoById(clientId.toLong())
+            ?: throw ClientNotFound("Client not found with id $clientId")
+        val transactions = transactionRepository.findByClientIdOrderByRealizadaEmDesc(
+            clientWithBalance.clienteId,
+            PageRequest.of(0, 10)
+        )
 
-        return buildFinancialStatement(transactions, balance)
+        return buildFinancialStatement(transactions, clientWithBalance)
     }
 
     private fun buildFinancialStatement(
         transactions: List<TransactionEntity>,
-        balance: BalanceEntity
+        clientWithBalance: ClientWithBalance
     ): FinancialStatement {
         return FinancialStatement(
             balance = Saldo(
-                total = balance.valor,
+                total = clientWithBalance.saldoValor!!,
                 dataExtrato = LocalDateTime.now(),
-                limite = balance.cliente!!.limite
+                limite = clientWithBalance.limite
             ),
             lastTransactions = transactions.map {
                 Transaction(
@@ -48,7 +48,7 @@ class FinancialStatementService(
                     description = it.descricao,
                     createAt = it.realizadaEm
                 )
-            }.sortedByDescending { it.createAt }
+            }
         )
     }
 

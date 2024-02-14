@@ -12,15 +12,15 @@ spring:
     hikari:
       maximum-pool-size: ${DB_INITIAL_POOL_SIZE:13}
       minimum-idle: {DB_INITIAL_POOL_SIZE:13}
-      idle-timeout: 10000
-      connection-timeout: 10000
+      idle-timeout: 8000
+      connection-timeout: 5000
       max-lifetime: 10000
   jpa:
     defer-datasource-initialization: true
     generate-ddl: true
     hibernate.ddl-auto: update
     properties:
-      jakarta.persistence.query.timeout: 10000
+      jakarta.persistence.query.timeout: 8000
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
