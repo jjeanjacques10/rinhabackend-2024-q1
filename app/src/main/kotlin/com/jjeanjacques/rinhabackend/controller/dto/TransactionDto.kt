@@ -1,17 +1,19 @@
-package com.jjeanjacques.rinhabackend.controller.model
+package com.jjeanjacques.rinhabackend.controller.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jjeanjacques.rinhabackend.enums.TypeTransaction
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 
 data class TransactionDto(
-    @field:Positive(message = "O valor deve ser um número inteiro positivo.")
-    @JsonProperty("valor") val value: Int,
-    @JsonProperty("tipo") val type: TypeTransaction,
+    @JsonProperty("valor")
+    val value: Number,
+
+    @JsonProperty("tipo")
+    val type: TypeTransaction,
+
     @JsonProperty("descricao")
     @field:Size(
         min = 1,
@@ -20,5 +22,6 @@ data class TransactionDto(
     )
     @field:NotBlank(message = "A descrição não pode estar em branco.")
     val description: String,
-    @JsonProperty("realizada_em") val createAt: LocalDateTime?
+    @JsonProperty("realizada_em")
+    val createAt: LocalDateTime?
 )

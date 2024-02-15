@@ -1,4 +1,4 @@
-package com.jjeanjacques.rinhabackend.controller.model
+package com.jjeanjacques.rinhabackend.controller.dto
 
 data class ExceptionDetailsDTO(
     var title: String? = null,

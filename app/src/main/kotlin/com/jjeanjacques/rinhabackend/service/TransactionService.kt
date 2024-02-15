@@ -1,16 +1,15 @@
 package com.jjeanjacques.rinhabackend.service
 
-import com.jjeanjacques.rinhabackend.controller.model.BalanceDto
-import com.jjeanjacques.rinhabackend.controller.model.TransactionDto
+import com.jjeanjacques.rinhabackend.controller.dto.BalanceDto
+import com.jjeanjacques.rinhabackend.controller.dto.TransactionDto
 import com.jjeanjacques.rinhabackend.enums.TypeTransaction
 import com.jjeanjacques.rinhabackend.exception.ClientNotFound
 import com.jjeanjacques.rinhabackend.exception.InvalidBalanceException
+import com.jjeanjacques.rinhabackend.exception.InvalidValueException
 import com.jjeanjacques.rinhabackend.model.ClientWithBalance
 import com.jjeanjacques.rinhabackend.model.TransactionResult
 import com.jjeanjacques.rinhabackend.repository.ClientRepository
 import com.jjeanjacques.rinhabackend.repository.TransactionQueryRepository
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 
@@ -21,6 +20,8 @@ class TransactionService(
 ) {
 
     fun save(clientId: Int, transaction: TransactionDto): BalanceDto {
+        validValue(transaction.value)
+
         val clientWithBalance = clientRepository.findClienteWithSaldoById(clientId.toLong())
             ?: throw ClientNotFound("Client not found with id $clientId")
 
@@ -36,15 +37,21 @@ class TransactionService(
     }
 
     private fun credit(transaction: TransactionDto, client: ClientWithBalance): TransactionResult? {
-        return transactionQueryRepository.creditar(client.clientId.toInt(), transaction.value, transaction.description)
+        return transactionQueryRepository.creditar(client.clientId.toInt(), transaction.value.toInt(), transaction.description)
     }
 
     private fun debit(transaction: TransactionDto, client: ClientWithBalance): TransactionResult? {
         validBalance(transaction, client)
-        return transactionQueryRepository.debitar(client.clientId.toInt(), transaction.value, transaction.description)
+        return transactionQueryRepository.debitar(client.clientId.toInt(), transaction.value.toInt(), transaction.description)
     }
 
     private fun validBalance(transaction: TransactionDto, client: ClientWithBalance) {
-        if ((client.balanceValue?.minus(transaction.value))!! < -client.limit) throw InvalidBalanceException("Transaction value exceeds client limit")
+        if ((client.balanceValue?.minus(transaction.value.toInt()))!! < -client.limit) throw InvalidBalanceException("Transaction value exceeds client limit")
+    }
+
+    private fun validValue(value: Number){
+        val stringValue = value.toString()
+        val isValid = !stringValue.contains('.') && value.toInt() > 0
+        if (!isValid) throw InvalidValueException("O valor deve ser um número inteiro positivo.")
     }
 }

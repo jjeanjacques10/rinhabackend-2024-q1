@@ -1,7 +1,7 @@
 package com.jjeanjacques.rinhabackend.controller
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
-import com.jjeanjacques.rinhabackend.controller.model.ExceptionDetailsDTO
+import com.jjeanjacques.rinhabackend.controller.dto.ExceptionDetailsDTO
 import com.jjeanjacques.rinhabackend.exception.ClientNotFound
 import com.jjeanjacques.rinhabackend.exception.InvalidBalanceException
 import org.springframework.http.HttpHeaders
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import java.lang.RuntimeException
 import java.time.LocalDateTime
 
 @ControllerAdvice
@@ -49,8 +50,8 @@ class ControllerAdviceHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails)
     }
 
-    @ExceptionHandler(InvalidBalanceException::class)
-    fun handleInvalidBalanceExceptionException(ex: InvalidBalanceException, request: WebRequest): ResponseEntity<Any> {
+    @ExceptionHandler(RuntimeException::class)
+    fun handleRuntimeException(ex: RuntimeException, request: WebRequest): ResponseEntity<Any> {
         val errorDetails = ExceptionDetailsDTO(
             timestamp = LocalDateTime.now().toString(),
             status = HttpStatus.UNPROCESSABLE_ENTITY.value(),

@@ -4,6 +4,7 @@ services:
   api01: &api
     build:
       context: ./app
+      dockerfile: Dockerfile
     hostname: api01
     network_mode: host
     restart: on-failure

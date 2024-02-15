@@ -1,13 +1,11 @@
 package com.jjeanjacques.rinhabackend.controller
 
-import com.jjeanjacques.rinhabackend.controller.model.BalanceDto
-import com.jjeanjacques.rinhabackend.controller.model.TransactionDto
+import com.jjeanjacques.rinhabackend.controller.dto.BalanceDto
+import com.jjeanjacques.rinhabackend.controller.dto.TransactionDto
 import com.jjeanjacques.rinhabackend.model.FinancialStatement
 import com.jjeanjacques.rinhabackend.service.FinancialStatementService
 import com.jjeanjacques.rinhabackend.service.TransactionService
 import jakarta.validation.Valid
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
