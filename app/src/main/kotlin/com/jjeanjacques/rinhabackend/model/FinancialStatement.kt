@@ -8,20 +8,21 @@ import java.time.LocalDateTime
 data class FinancialStatement(
     @JsonProperty("saldo") val balance: Saldo,
     @JsonProperty("ultimas_transacoes")
-    val lastTransactions: List<Transaction>
+    var lastTransactions: List<Transaction>
 )
 
 data class Transaction(
-    @JsonProperty("valor") val value: Int,
-    @JsonProperty("tipo") val type: TypeTransaction,
-    @JsonProperty("descricao") val description: String,
-    @JsonProperty("realizada_em") val createAt: LocalDateTime
+    @JsonProperty("valor") var value: Int,
+    @JsonProperty("tipo") var type: TypeTransaction,
+    @JsonProperty("descricao") var description: String,
+    @JsonProperty("realizada_em") var createAt: LocalDateTime
 )
 
 data class Saldo(
-    val total: Int,
+    var total: Int,
     @JsonProperty("data_extrato")
-    val dataExtrato: LocalDateTime,
-    val limite: Int
+    var dataExtrato: LocalDateTime,
+    @JsonProperty("limite")
+    var limit: Int
 )
 

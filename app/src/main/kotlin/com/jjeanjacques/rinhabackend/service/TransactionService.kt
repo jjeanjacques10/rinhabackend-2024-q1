@@ -6,9 +6,9 @@ import com.jjeanjacques.rinhabackend.enums.TypeTransaction
 import com.jjeanjacques.rinhabackend.exception.ClientNotFound
 import com.jjeanjacques.rinhabackend.exception.InvalidBalanceException
 import com.jjeanjacques.rinhabackend.model.ClientWithBalance
+import com.jjeanjacques.rinhabackend.model.TransactionResult
 import com.jjeanjacques.rinhabackend.repository.ClientRepository
 import com.jjeanjacques.rinhabackend.repository.TransactionQueryRepository
-import jakarta.persistence.Tuple
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -21,8 +21,6 @@ class TransactionService(
 ) {
 
     fun save(clientId: Int, transaction: TransactionDto): BalanceDto {
-        log.debug("Saving transaction $transaction")
-
         val clientWithBalance = clientRepository.findClienteWithSaldoById(clientId.toLong())
             ?: throw ClientNotFound("Client not found with id $clientId")
 
@@ -32,23 +30,21 @@ class TransactionService(
         }
 
         return BalanceDto(
-            limit = clientWithBalance.limite,
-            balance = result.get(0) as Int
+            limit = clientWithBalance.limit,
+            balance = result!!.newBalance
         )
     }
 
-    private fun credit(transaction: TransactionDto, client: ClientWithBalance): Tuple {
-        return transactionQueryRepository.creditar(client.clienteId.toInt(), transaction.value, transaction.description)
+    private fun credit(transaction: TransactionDto, client: ClientWithBalance): TransactionResult? {
+        return transactionQueryRepository.creditar(client.clientId.toInt(), transaction.value, transaction.description)
     }
 
-    private fun debit(transaction: TransactionDto, client: ClientWithBalance): Tuple {
+    private fun debit(transaction: TransactionDto, client: ClientWithBalance): TransactionResult? {
         validBalance(transaction, client)
-        return transactionQueryRepository.debitar(client.clienteId.toInt(), transaction.value, transaction.description)
+        return transactionQueryRepository.debitar(client.clientId.toInt(), transaction.value, transaction.description)
     }
 
     private fun validBalance(transaction: TransactionDto, client: ClientWithBalance) {
-        if ((client.saldoValor?.minus(transaction.value))!! < -client.limite) throw InvalidBalanceException("Transaction value exceeds client limit")
+        if ((client.balanceValue?.minus(transaction.value))!! < -client.limit) throw InvalidBalanceException("Transaction value exceeds client limit")
     }
-
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
 }

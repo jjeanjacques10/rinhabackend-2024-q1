@@ -1,5 +1,6 @@
 package com.jjeanjacques.rinhabackend.entity
 
+import com.jjeanjacques.rinhabackend.model.ClientWithBalance
 import jakarta.persistence.*
 
 @Entity

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.lang.Nullable
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
@@ -66,6 +67,22 @@ class ControllerAdviceHandler : ResponseEntityExceptionHandler() {
             status = HttpStatus.UNPROCESSABLE_ENTITY.value(),
             details = ex.message,
             developerMethod = ex.javaClass.name
+        )
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorDetails)
+    }
+
+    override fun handleMethodArgumentNotValid(
+        ex: MethodArgumentNotValidException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        val errorDetails = ExceptionDetailsDTO(
+            title = ex.cause?.message,
+            timestamp = LocalDateTime.now().toString(),
+            status = HttpStatus.UNPROCESSABLE_ENTITY.value(),
+            details = ex.message,
+            developerMethod = ex.javaClass.getName()
         )
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorDetails)
     }

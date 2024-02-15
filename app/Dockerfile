@@ -1,9 +1,9 @@
-FROM openjdk:17-alpine
+FROM ubuntu:22.04
 
-ARG JAR_FILE=target/rinhabackend-0.0.1-SNAPSHOT.jar
+WORKDIR /app
 
-COPY ${JAR_FILE} app.jar
+COPY ./target/rinhabackend /app/rinhabackend
 
-ENTRYPOINT ["java",  "-XX:+UseG1GC", "-Xmx64m", "-Xms64m", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]
+ENTRYPOINT ["./rinhabackend"]
 
 EXPOSE ${PORT}

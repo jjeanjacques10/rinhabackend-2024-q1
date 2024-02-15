@@ -1,24 +1,67 @@
 package com.jjeanjacques.rinhabackend.repository
 
-import com.jjeanjacques.rinhabackend.entity.TransactionEntity
-import jakarta.persistence.Tuple
-import org.springframework.data.jpa.repository.JpaRepository
+import com.jjeanjacques.rinhabackend.model.TransactionResult
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 
-interface TransactionQueryRepository : JpaRepository<TransactionEntity, Long> {
+@Repository
+class TransactionQueryRepository {
+
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
 
     @Query(nativeQuery = true, value = "SELECT * FROM debitar(:clienteId, :valor, :descricao)")
     fun debitar(
-        @Param("clienteId") clienteId: Int,
-        @Param("valor") valor: Int,
-        @Param("descricao") descricao: String
-    ): Tuple
+        clienteId: Int,
+        valor: Int,
+        descricao: String
+    ): TransactionResult? {
+        val query = entityManager.createNativeQuery(
+            "SELECT * FROM debitar(:clienteId, :valor, :descricao)"
+        )
 
-    @Query(nativeQuery = true, value = "SELECT * FROM creditar(:clienteId, :valor, :descricao)")
+        query.setParameter("clienteId", clienteId)
+        query.setParameter("valor", valor)
+        query.setParameter("descricao", descricao)
+
+        val result = query.resultList
+        return if (result.isNotEmpty()) {
+            val row = result[0] as Array<*>
+            TransactionResult(
+                row[0] as Int,
+                row[1] as Boolean,
+                row[2] as String,
+            )
+        } else {
+            null
+        }
+    }
+
     fun creditar(
-        @Param("clienteId") clienteId: Int,
-        @Param("valor") valor: Int,
-        @Param("descricao") descricao: String
-    ): Tuple
+        clienteId: Int,
+        valor: Int,
+        descricao: String
+    ): TransactionResult? {
+        val query = entityManager.createNativeQuery(
+            "SELECT * FROM creditar(:clienteId, :valor, :descricao)"
+        )
+
+        query.setParameter("clienteId", clienteId)
+        query.setParameter("valor", valor)
+        query.setParameter("descricao", descricao)
+
+        val result = query.resultList
+        return if (result.isNotEmpty()) {
+            val row = result[0] as Array<*>
+            TransactionResult(
+                row[0] as Int,
+                row[1] as Boolean,
+                row[2] as String,
+            )
+        } else {
+            null
+        }
+    }
 }

@@ -9,7 +9,6 @@ import com.jjeanjacques.rinhabackend.model.Saldo
 import com.jjeanjacques.rinhabackend.model.Transaction
 import com.jjeanjacques.rinhabackend.repository.ClientRepository
 import com.jjeanjacques.rinhabackend.repository.TransactionRepository
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -24,8 +23,7 @@ class FinancialStatementService(
         val clientWithBalance = clientRepository.findClienteWithSaldoById(clientId.toLong())
             ?: throw ClientNotFound("Client not found with id $clientId")
         val transactions = transactionRepository.findByClientIdOrderByRealizadaEmDesc(
-            clientWithBalance.clienteId,
-            PageRequest.of(0, 10)
+            clientWithBalance.clientId
         )
 
         return buildFinancialStatement(transactions, clientWithBalance)
@@ -37,9 +35,9 @@ class FinancialStatementService(
     ): FinancialStatement {
         return FinancialStatement(
             balance = Saldo(
-                total = clientWithBalance.saldoValor!!,
+                total = clientWithBalance.balanceValue!!,
                 dataExtrato = LocalDateTime.now(),
-                limite = clientWithBalance.limite
+                limit = clientWithBalance.limit
             ),
             lastTransactions = transactions.map {
                 Transaction(
@@ -51,5 +49,4 @@ class FinancialStatementService(
             }
         )
     }
-
 }

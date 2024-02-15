@@ -30,6 +30,15 @@ gerado. Utilize o seguinte comando:
 java -jar app/target/rinhabackend-0.0.1-SNAPSHOT.jar
 ```
 
+## Graalvm
+
+Configurando o [Graalvm](https://www.youtube.com/watch?v=8umoZWj6UcU) para resolver o problema de memória.
+
+``` shell
+mvn -Pnative spring-boot:build-image
+docker run --rm -p 8080:8080 docker.io/library/rinhabackend-0.0.1-SNAPSHOT
+```
+
 ## Sobre a Rinha
 
 A Rinha de Backend é uma competição onde desenvolvedores demonstram suas habilidades para melhorar a performance de
