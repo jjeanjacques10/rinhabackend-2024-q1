@@ -4,20 +4,26 @@ services:
   db:
     image: postgres:latest
     hostname: db
+    network_mode: host
+    restart: on-failure
     environment:
       - POSTGRES_PASSWORD=123
       - POSTGRES_USER=admin
       - POSTGRES_DB=rinha
-    ports:
-      - "5432:5432"
+    healthcheck:
+      test: [ 'CMD', 'pg_isready' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    command: postgres -c checkpoint_timeout=600 -c max_wal_size=4096 -c synchronous_commit=0 -c full_page_writes=0
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     deploy:
       resources:
         limits:
-          cpus: "0.25"
-          memory: "140MB"
+          cpus: "0.20"
+          memory: "230MB"
 
   pgadmin:
     image: dpage/pgadmin4:latest
